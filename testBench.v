@@ -1,38 +1,31 @@
-`timescale 1ns / 1ps
+module Datapath_tb();
+    reg clk_tb, reset_tb;
+    wire [31:0] Dout_tb;
 
-//////////////////////////////////////////////////////////////////////////////////
-//Eric Chhour
-//CECS341 Lab 02
-//2/06/21
-//////////////////////////////////////////////////////////////////////////////////
+    integer i;
 
-module testBench;
-    //Reg=inputs, wire=outputs
-	reg clkTB, resetTB;
-	wire [31:0]DoutTB;
-	
-	integer i;
-	
-	Datapath uut(.clk(clkTB), .reset(resetTB), .Dout(DoutTB));
-	
-	always 
-	   #10 clkTB = ~clkTB;
-	task Dump_RegFile; begin
-        $timeformat(-9, -1, " ns", 9);
+    Datapath uut(.clk(clk_tb), .reset(reset_tb), .Dout(Dout_tb));
+
+    always
+        #10 clk_tb = ~clk_tb;
+
+    task Dump_RegFile; begin
+        $timeformat(-9, 1, " ns", 9);
         for(i=0; i<32; i=i+1) begin
-            @(posedge clkTB)
-            $display("t=%t rf[%0d]: %h", $time, i, uut.rf.regArray[i]);
-	       end
-	    end
-	endtask
-	
-	initial begin
-	   $readmemh("imem.dat", uut.im.imem);    
-	   $readmemh("regfile.dat", uut.rg.regArray);
-	   resetTB = 2'b1;
-       #20 resetTB = 2'b0;
-	   Dump_RegFile;
-	   $finish;
-	end
+            @(posedge clk_tb)
+            $display("t=%t rf[%0d]: %h", $time, i, uut.register.regArray[i]);
+        end
+    end
+    endtask
 
+    initial
+    begin
+        clk_tb = 0;
+        $readmemh("imem.dat", uut.Imem.imem);
+        $readmemh("regfile.dat", uut.register.regArray);
+        reset_tb = 2'b1;
+        #20 reset_tb = 2'b0;
+        Dump_RegFile;
+        $finish;
+    end
 endmodule
