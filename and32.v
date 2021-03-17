@@ -99,11 +99,17 @@ module alu(
             end
             
             4'b1111: begin //Set Less Than Signed
-             
+             if(A < B)
+                ALU_Out[31] = 1;
+             else
+                ALU_Out[31] = 0;
             end
             
             4'b0101: begin //Set less than Unsigned
-            
+            if(A < B)
+                ALU_Out[31] = 1;
+             else
+                ALU_Out[31] = 0;
             end
                
             default: begin
